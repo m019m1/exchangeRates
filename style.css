@@ -1,0 +1,49 @@
+.exchange {
+	width: 620px;
+	/* border: 1px solid #000; */
+	display: grid;
+	grid-template-columns: max-content 1fr;
+
+}
+	.enterCurrency {
+		/* border: 1px solid red; */
+		display: flex;
+		justify-content: flex-end;
+	}
+		.currencyPicker {
+			width: 120px;
+			margin: 10px 20px;
+		}
+	
+	.enterDate {
+		/* border: 1px solid green; */
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+	}
+		.datePicker {
+			margin: 10px 20px;
+		}
+
+	.convert {
+		grid-column: 2/3;
+		/* justify-items: center; */
+		margin: auto;
+		margin-right: 20px;
+	}
+	#result {
+		grid-column: 2/3;
+		/* justify-items: center; */
+		margin: auto;
+		margin-right: 20px;
+		margin-top: 10px; 
+		
+	}
+/* #myChart {
+	width: 620px !important;
+	height: 310px !important;
+} */
+.chartContainer {
+	width: 620px ;
+	height: 310px ;
+}

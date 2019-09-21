@@ -5,27 +5,41 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title>Exchange Rates and Charts</title>
+		<link rel="stylesheet" href="style.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
 	</head>
 	<body>
-		<div class="inputData">
-			<input type="text" id="currency1" list="currencyFrom">
-			<datalist id="currencyFrom">
-				<option value="RUB">Российский рубль</option>
-			</datalist>
-
-			<input type="text" id="currency2" list="currencyTo">
-			<datalist id="currencyTo">
-				<option value="RUB">Российский рубль</option>
-			</datalist>
-
-			<button onclick="convert();">Convert</button>
+		<div class="exchange">
+			<div class="enterCurrency">
+				<p>Enter currency from</p>
+				<input type="text" placeholder="Enter a currency" class="currencyPicker" id="currency1" list="currencyFrom">
+					<datalist id="currencyFrom"></datalist>
+			</div>
+			<div class="enterDate">
+				<p>Enter date from</p>
+				<input type="date" class="datePicker" name="date" id="datePicker1">
+			</div>
+			
+			<div class="enterCurrency">
+				<p>Enter currency to</p>
+				<input type="text" placeholder="Enter a currency"  class="currencyPicker" id="currency2" list="currencyTo">
+					<datalist id="currencyTo"></datalist>	
+			</div>
+			<div class="enterDate">
+				<p>Enter date to</p>
+				<input type="date" class="datePicker" name="date" id="datePicker2">
+			</div>
+			
+			<button class="convert" onclick="convert();">Convert</button>
+			<p id="result"></p>
 		</div>
 
-		<p id="result"></p>
-		
-		
-		<script src="fetch.js"></script>
+		<div class="chartContainer">
+				<canvas id="myChart"></canvas>
+		</div>
+
 		<script src="main.js"></script>
+
 	</body>
 
 </html>
