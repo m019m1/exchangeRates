@@ -9,29 +9,32 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
 	</head>
 	<body>
+		<p>Data provided by <a target="_blank" href="https://exchangeratesapi.io/">exchangeratesapi.io</a></p>
+		<p>Rates published by the <a target="_blank" href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html">European Central Bank</a></p>
+		
 		<div class="exchange">
 			<div class="enterCurrency">
-					<select class="currencyPicker" id="currencyPickerFrom" placeholder="Choose currency"></select>
-					<input type="text" class="coins" id="coinsFrom">
-					<p>coin(s)</p>
+				<select class="currency" id="currencyFrom" placeholder="Choose currency"></select>
+				<input type="text" class="coins" id="coinsFrom">
+				<p>coin(s)</p>
 			</div>
 			<div class="enterDate">
-				<p>Enter date from:</p>
-				<input type="date" class="datePicker" name="date" id="datePicker1">
+				<p>Start date:</p>
+				<input type="date" class="datePicker" name="date" id="startDate">
 			</div>
 			
 			<div class="enterCurrency">
-				<select class="currencyPicker" id="currencyPickerTo" placeholder="Choose currency"></select>
+				<select class="currency" id="currencyTo" placeholder="Choose currency"></select>
 				<input type="text" class="coins" id="coinsTo">
 				<p>coin(s)</p>
 			</div>
 			<div class="enterDate">
-				<p>Enter date to:</p>
-				<input type="date" class="datePicker" name="date" id="datePicker2">
+				<p>End date:</p>
+				<input type="date" class="datePicker" name="date" id="endDate">
 			</div>
 			
 			<button class="convert" onclick="convert();">Convert</button>
-			<p id="result"></p>
+			<p id="result">Please, enter the data above and press 'Convert' to retrieve exchange rates</p>
 		</div>
 
 		<div class="chartContainer">

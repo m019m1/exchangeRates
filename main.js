@@ -34,10 +34,12 @@ const CURRENCIES = [
 	['ZAR',	'South African rand', 10]
 ];
 
-let currencyPickerFrom = document.getElementById('currencyPickerFrom');
-let currencyPickerTo = document.getElementById('currencyPickerTo');
-let coinsFrom = document.getElementById('coinsFrom');
-let coinsTo = document.getElementById('coinsTo');
+const currencyFrom = document.getElementById('currencyFrom');
+const currencyTo = document.getElementById('currencyTo');
+const coinsFrom = document.getElementById('coinsFrom');
+const coinsTo = document.getElementById('coinsTo');
+const startDate = document.getElementById('startDate');
+const endDate = document.getElementById('endDate');
 
 initDate();
 initCurrencies();
@@ -58,14 +60,26 @@ function initDate() {
 function initCurrencies() {
 	let options = '';
 	for(let [name, description] of CURRENCIES) {
-		options += `<option value=${name}> ${name} - ${description}</option>`;
+		switch (name) {
+			case 'USD':
+				currencyFrom.innerHTML += `<option selected value=${name}> ${name} - ${description}</option>`;
+				currencyTo.innerHTML += `<option value=${name}> ${name} - ${description}</option>`;
+				showNominal(coinsFrom, currencyFrom.value);
+				break;
+			case 'RUB':
+				currencyFrom.innerHTML += `<option value=${name}> ${name} - ${description}</option>`;
+				currencyTo.innerHTML += `<option selected value=${name}> ${name} - ${description}</option>`;
+				showNominal(coinsTo, currencyTo.value);
+				break;
+			default:
+				currencyFrom.innerHTML += `<option value=${name}> ${name} - ${description}</option>`;
+				currencyTo.innerHTML += `<option value=${name}> ${name} - ${description}</option>`;
+		}
 	}
-	currencyPickerFrom.innerHTML += options;
-	currencyPickerTo.innerHTML += options;
 }
 
-currencyPickerFrom.oninput = function() {showNominal(coinsFrom, event.currentTarget.value)};
-currencyPickerTo.oninput = function() {showNominal(coinsTo, event.currentTarget.value)};
+currencyFrom.onchange = function() {showNominal(coinsFrom, event.currentTarget.value)};
+currencyTo.onchange = function() {showNominal(coinsTo, event.currentTarget.value)};
 
 function showNominal(scoreboard, name) {
 	const index = ( CURRENCIES.map( currency => currency[0]) ).indexOf(name);
@@ -73,12 +87,9 @@ function showNominal(scoreboard, name) {
 	scoreboard.value = CURRENCIES[index][2];
 }
 
-let ctx = document.getElementById('myChart').getContext('2d');
-let myChart = new Chart( ctx, {
+const ctx = document.getElementById('myChart').getContext('2d');
+const myChart = new Chart( ctx, {
  	type: 'line',
-	data: {
-			datasets: []
-	},
 	options: {
 		title: {
 			display: true,
@@ -102,17 +113,23 @@ let myChart = new Chart( ctx, {
 });
 
 function convert() {
-	const curNameFrom = document.getElementById('currencyPickerFrom').value;
-	const curNameTo = document.getElementById('currencyPickerTo').value;
-	const dateFrom = document.getElementById('datePicker1').value;
-	const dateTo = document.getElementById('datePicker2').value;
-
-	if(!curNameFrom || !curNameTo) return false;
+	if(!isNumeric(coinsFrom.value) || !isNumeric(coinsTo.value) ||
+		 coinsFrom.value == 0 || coinsTo.value == 0 ||
+		 startDate.value == "" || endDate.value === "" ||
+		 startDate.value > endDate.value
+		 ) {
+		alert("Please, enter correct data");
+		return false;
+	}
 	
 	(async () => {
-		const url = `https://api.exchangeratesapi.io/history?start_at=${dateFrom}&end_at=${dateTo}&symbols=${curNameTo}&base=${curNameFrom}`;
+		const url = `https://api.exchangeratesapi.io/history?start_at=${startDate.value}&end_at=${endDate.value}&symbols=${currencyTo.value}&base=${currencyFrom.value}`;
 		const response = await fetch(url);
 		const result = await response.json();
+		if(isEmpty(result.rates)) {
+			document.getElementById('result').innerHTML = "Sorry, we haven't exchange rates for this period =(";
+			return false;
+		}
 		const sorted = Object.entries(result.rates).sort( ([key1, value1], [key2, value2]) => {
 			const a2 = Date.parse(key1);
 			const b2 = Date.parse(key2);
@@ -120,18 +137,18 @@ function convert() {
 		});
 		const rates = sorted.rates;
 		/* const dates = Object.keys(result.rates);
-		const values = Object.values(result.rates).map( values => values[`${curNameTo}`].toFixed(4)); */
+		const values = Object.values(result.rates).map( values => values[`${currencyTo.value}`].toFixed(4)); */
 		
 		//.values and .keys methods return random arrays! =((
 		let dates = [], values = [];
 		for(let [date, value] of sorted) {
 			dates.push(date);
-			values.push(value[curNameTo] * coinsFrom.value / coinsTo.value);
+			values.push(value[currencyTo.value] * coinsFrom.value / coinsTo.value);
 		}
 
 		myChart.data.labels = dates;
 		myChart.data.datasets[0] = {
-			label: `${coinsFrom.value} ${curNameFrom} to ${coinsTo.value} ${curNameTo} exchange rate`,
+			label: `${coinsFrom.value} ${currencyFrom.value} to ${coinsTo.value} ${currencyTo.value} exchange rate`,
 			data: values,
 			backgroundColor: 'transparent',
 			borderColor: 'rgb(0, 186, 6)'
@@ -142,10 +159,19 @@ function convert() {
 		});
 
 		const scoreboard = document.getElementById('result');
-		scoreboard.innerHTML = `${coinsFrom.value} ${curNameFrom} 
-												 to ${coinsTo.value} ${curNameTo} current rate is 
+		scoreboard.innerHTML = `${coinsFrom.value} ${currencyFrom.value} 
+												 to ${coinsTo.value} ${currencyTo.value} current rate is 
 												 		${values[values.length - 1].toFixed(4)}`;
 	})();
 
 }
 
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+function isEmpty(obj) {
+	for (let key in obj) {
+		return false;
+	}
+	return true;
+}

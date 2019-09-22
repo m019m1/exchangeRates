@@ -1,5 +1,5 @@
 .exchange {
-	width: 680px;
+	width: 640px;
 	display: grid;
 	grid-template-columns: max-content 1fr;
 
@@ -8,7 +8,7 @@
 		display: flex;
 		justify-content: flex-end;
 	}
-		.currencyPicker {
+		.currency {
 			margin: 10px 20px;
 		}
 		.coins {
@@ -32,15 +32,14 @@
 		margin-right: 0px;
 	}
 	#result {
-		grid-column: 2/3;
-		/* width: 350px; */
-		height: 15px;
+		grid-column: 1/3;
 		margin: auto;
 		margin-right: 0px;
-		margin-top: 10px; 
-		
+		margin-top: 10px;
+		font-weight: bold;
+		color: #dd4444;
 	}
 .chartContainer {
-	width: 680px;
-	height: 340px;
+	width: 640px;
+	height: 320px;
 }
