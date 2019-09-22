@@ -11,8 +11,13 @@
 		justify-content: flex-end;
 	}
 		.currencyPicker {
-			width: 120px;
+			width: 155px;
 			margin: 10px 20px;
+		}
+		.coins {
+			width: 50px;
+			margin: 10px 5px 10px 20px;
+			text-align: end;
 		}
 	
 	.enterDate {
@@ -22,14 +27,14 @@
 		align-items: center;
 	}
 		.datePicker {
-			margin: 10px 20px;
+			margin: 10px 0px 10px 5px;
 		}
 
 	.convert {
 		grid-column: 2/3;
 		/* justify-items: center; */
 		margin: auto;
-		margin-right: 20px;
+		margin-right: 0px;
 	}
 	#result {
 		grid-column: 2/3;

@@ -11,22 +11,24 @@
 	<body>
 		<div class="exchange">
 			<div class="enterCurrency">
-				<p>Enter currency from</p>
-				<input type="text" placeholder="Enter a currency" class="currencyPicker" id="currency1" list="currencyFrom">
+				<input type="text" class="currencyPicker" id="currencyPickerFrom" placeholder="Enter/choose currency" list="currencyFrom">
 					<datalist id="currencyFrom"></datalist>
+					<input type="text" class="coins" id="coinsFrom">
+					<p>coin(s)</p>
 			</div>
 			<div class="enterDate">
-				<p>Enter date from</p>
+				<p>Enter date from:</p>
 				<input type="date" class="datePicker" name="date" id="datePicker1">
 			</div>
 			
 			<div class="enterCurrency">
-				<p>Enter currency to</p>
-				<input type="text" placeholder="Enter a currency"  class="currencyPicker" id="currency2" list="currencyTo">
-					<datalist id="currencyTo"></datalist>	
+				<input type="text" class="currencyPicker" id="currencyPickerTo" placeholder="Enter/choose currency" list="currencyTo">
+				<datalist id="currencyTo"></datalist>
+				<input type="text" class="coins" id="coinsTo">
+				<p>coin(s)</p>
 			</div>
 			<div class="enterDate">
-				<p>Enter date to</p>
+				<p>Enter date to:</p>
 				<input type="date" class="datePicker" name="date" id="datePicker2">
 			</div>
 			
