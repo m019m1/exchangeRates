@@ -34,23 +34,13 @@ const CURRENCIES = [
 	['ZAR',	'South African rand', 10]
 ];
 
-let currencyFrom = document.getElementById('currencyFrom');
-let currencyTo = document.getElementById('currencyTo');
 let currencyPickerFrom = document.getElementById('currencyPickerFrom');
 let currencyPickerTo = document.getElementById('currencyPickerTo');
-
 let coinsFrom = document.getElementById('coinsFrom');
 let coinsTo = document.getElementById('coinsTo');
+
 initDate();
 initCurrencies();
-currencyPickerFrom.onchange = function() {showNominal(coinsFrom, event.currentTarget.value)};
-currencyPickerTo.onchange = function() {showNominal(coinsTo, event.currentTarget.value)};
-
-function showNominal(scoreboard, name) {
-	const index = ( CURRENCIES.map( currency => currency[0]) ).indexOf(name);
-	if(index == -1) return;
-	scoreboard.value = CURRENCIES[index][2];
-}
 
 function initDate() {
 	let today = new Date();
@@ -59,7 +49,7 @@ function initDate() {
 	month = month > 9 ? month : '0' + month;
 	let day = today.getDate(); 
 	day = day > 9 ? day : '0' + day;
-
+	
 	let datePickers = document.getElementsByClassName('datePicker');
 	datePickers[0].value = `${year}-${month}-01`;
 	datePickers[1].value = `${year}-${month}-${day}`;
@@ -68,24 +58,26 @@ function initDate() {
 function initCurrencies() {
 	let options = '';
 	for(let [name, description] of CURRENCIES) {
-		options += `<option value=${name}>${description}</option>`;
+		options += `<option value=${name}> ${name} - ${description}</option>`;
 	}
-	currencyFrom.innerHTML += options;
-	currencyTo.innerHTML += options;
+	currencyPickerFrom.innerHTML += options;
+	currencyPickerTo.innerHTML += options;
+}
+
+currencyPickerFrom.oninput = function() {showNominal(coinsFrom, event.currentTarget.value)};
+currencyPickerTo.oninput = function() {showNominal(coinsTo, event.currentTarget.value)};
+
+function showNominal(scoreboard, name) {
+	const index = ( CURRENCIES.map( currency => currency[0]) ).indexOf(name);
+	if(index == -1) return;
+	scoreboard.value = CURRENCIES[index][2];
 }
 
 let ctx = document.getElementById('myChart').getContext('2d');
 let myChart = new Chart( ctx, {
  	type: 'line',
 	data: {
-			datasets: [
-				/* {
-					label: "please, enter the data above and press 'Convert' to retrieve exchange rates",
-					data: [],
-					backgroundColor: 'transparent',
-					borderColor: 'rgb(0, 186, 6)'
-				} */
-			]
+			datasets: []
 	},
 	options: {
 		title: {
@@ -103,10 +95,8 @@ let myChart = new Chart( ctx, {
 		tooltips: {
 			intersect: false,
 			callbacks: {
-				label: tooltipItem => (+tooltipItem.value).toFixed(2),
-				
-			},
-
+				label: tooltipItem => (+tooltipItem.value).toFixed(2)
+			}
 		}
 	}
 });
@@ -151,9 +141,10 @@ function convert() {
 			duration: 2000
 		});
 
-		// const rate = result.rates[`${currencyTo}`].toFixed(4);
-		// const scoreboard = document.getElementById('result');
-		// scoreboard.innerHTML = `Current rate is ${rate}`;
+		const scoreboard = document.getElementById('result');
+		scoreboard.innerHTML = `${coinsFrom.value} ${curNameFrom} 
+												 to ${coinsTo.value} ${curNameTo} current rate is 
+												 		${values[values.length - 1].toFixed(4)}`;
 	})();
 
 }
