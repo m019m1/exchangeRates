@@ -40,21 +40,16 @@ const coinsFrom = document.getElementById('coinsFrom');
 const coinsTo = document.getElementById('coinsTo');
 const startDate = document.getElementById('startDate');
 const endDate = document.getElementById('endDate');
+let today;
 
 initDate();
 initCurrencies();
 
 function initDate() {
-	let today = new Date();
-	let year = today.getFullYear();
-	let month = today.getMonth() + 1;
-	month = month > 9 ? month : '0' + month;
-	let day = today.getDate(); 
-	day = day > 9 ? day : '0' + day;
-	
-	let datePickers = document.getElementsByClassName('datePicker');
-	datePickers[0].value = `${year}-${month}-01`;
-	datePickers[1].value = `${year}-${month}-${day}`;
+	today = new Date();
+	let [year, month, day] = getYearMonthDay(today);
+	startDate.value = `${year}-${month}-01`;
+	today = endDate.value = `${year}-${month}-${day}`;
 }
 
 function initCurrencies() {
@@ -119,25 +114,87 @@ const myChart = new Chart( ctx, {
 	}
 });
 
-function getRates() {
+const go = document.getElementById('go');
+const backward = document.getElementById('backward');
+const forward = document.getElementById('forward');
+go.onclick = () => getRates(startDate.value, endDate.value);
+forward.onclick = () => goForward(30);
+backward.onclick = () => goBackward(30);
+
+function goForward(numOfDays) {
+	let start = new Date(startDate.value);
+	let end = new Date(endDate.value);
+	const deltaMonths = (end - start) / 1000 / 86400;
+
+	end.setDate(end.getDate() + numOfDays);
+	end = end > new Date() ? new Date() : end;
+	let [year, month, day] = getYearMonthDay(end);
+	endDate.value = `${year}-${month}-${day}`;
+	
+	if(deltaMonths >= 30) {
+		start.setDate(start.getDate() + numOfDays);
+		let [year2, month2, day2] = getYearMonthDay(start);
+		startDate.value = `${year2}-${month2}-${day2}`;
+	}
+	getRates(startDate.value, endDate.value);
+};
+
+function goBackward(numOfDays) {
+	let start = new Date(startDate.value);
+	let end = new Date(endDate.value);
+	const deltaMonths = (end - start) / 1000 / 86400;
+
+
+	start.setDate(start.getDate() - numOfDays);
+	let [year, month, day] = getYearMonthDay(start);
+	startDate.value = `${year}-${month}-${day}`;
+
+	if(deltaMonths >= 30) {
+		end.setDate(end.getDate() - numOfDays);
+		let [year2, month2, day2] = getYearMonthDay(end);
+		endDate.value = `${year2}-${month2}-${day2}`;
+	}
+	getRates(startDate.value, endDate.value);
+};
+
+function getYearMonthDay(date) {
+	let year = date.getFullYear();
+	let month = date.getMonth() + 1;
+	month = month > 9 ? month : '0' + month;
+	let day = date.getDate(); 
+	day = day > 9 ? day : '0' + day;
+	return [year, month, day];
+}
+function getRates(start, end) {
+	
+	// checking
 	if(!isNumeric(coinsFrom.value) || !isNumeric(coinsTo.value) ||
-		 coinsFrom.value == 0 || coinsTo.value == 0 ||
-		 startDate.value == "" || endDate.value === "" ||
-		 startDate.value > endDate.value
-		 ) {
+	coinsFrom.value == 0 || coinsTo.value == 0 ||
+	start == "" || end === "" ||
+	start > end ||
+	start > today || end > today
+	) {
 		alert("Please, enter correct data");
 		return false;
 	}
 	
 	(async () => {
-		const url = `https://api.exchangeratesapi.io/history?start_at=${startDate.value}&end_at=${endDate.value}&symbols=${currencyTo.value}&base=${currencyFrom.value}`;
+		const url = `https://api.exchangeratesapi.io/history?start_at=${start}&end_at=${end}&symbols=${currencyTo.value}&base=${currencyFrom.value}`;
 		const response = await fetch(url);
 		const result = await response.json();
 		if(isEmpty(result.rates)) {
 			document.getElementById('result').innerHTML = "Sorry, we haven't exchange rates for this period =(";
+			myChart.data.labels = [];
+			myChart.data.datasets[0].data = [];
+			myChart.data.datasets[0].label = '';
+			myChart.options.legend.labels.boxWidth = 0;
+			
+			myChart.update({
+				duration: 1000
+			});
+			checkWhetherCanGoForward();
 			return false;
 		}
-		console.log(result.rates);
 		
 		// sorting results
 		const cortedResult = Object.entries(result.rates).sort( ([key1], [key2]) => {
@@ -149,27 +206,35 @@ function getRates() {
 			dates.push(date);
 			values.push(value[currencyTo.value] * coinsFrom.value / coinsTo.value);
 		}
-
+		
 		// to save animation it's need to override props of old object instead of creating new object
 		myChart.data.labels = dates;
 		myChart.data.datasets[0].data = values;
 		myChart.data.datasets[0].label = `${coinsFrom.value} ${currencyFrom.value} to ${coinsTo.value} ${currencyTo.value} exchange rate`;
 		myChart.options.legend.labels.boxWidth = 15;
-
+		
 		myChart.update({
 			duration: 1000
 		});
-
+		
 		const scoreboard = document.getElementById('result');
 		scoreboard.innerHTML = `${coinsFrom.value} ${currencyFrom.value} 
-												 to ${coinsTo.value} ${currencyTo.value} current rate is 
-												 		${values[values.length - 1].toFixed(4)}`;
-	})();
+		to ${coinsTo.value} ${currencyTo.value} rate on the end-date is 
+		${values[values.length - 1].toFixed(4)}`;
+		
+		backward.style.display = forward.style.display = "inline-block";
+		checkWhetherCanGoForward();
 
+		function checkWhetherCanGoForward() {
+			if(end == today) forward.setAttribute('disabled', 'true');
+				else forward.removeAttribute('disabled');
+		}
+	})();
+	
 }
 
 function isNumeric(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
+	return !isNaN(parseFloat(n)) && isFinite(n);
 }
 function isEmpty(obj) {
 	for (let key in obj) {

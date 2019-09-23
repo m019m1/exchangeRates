@@ -33,12 +33,14 @@
 				<input type="date" class="datePicker" name="date" id="endDate">
 			</div>
 			
-			<button class="convert" onclick="getRates();">Get exchange rates</button>
+			<button id="go">Get exchange rates</button>
 			<p id="result">Please, fill the form above and press 'Convert' to retrieve exchange rates</p>
 		</div>
 
 		<div class="chartContainer">
-				<canvas id="myChart"></canvas>
+			<button class="chartNavigation" id="backward">30 days backward</button>
+			<button class="chartNavigation" id="forward">30 days forward</button>
+			<canvas id="myChart"></canvas>
 		</div>
 
 		<script src="main.js"></script>
