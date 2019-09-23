@@ -89,7 +89,14 @@ function showNominal(scoreboard, name) {
 
 const ctx = document.getElementById('myChart').getContext('2d');
 const myChart = new Chart( ctx, {
- 	type: 'line',
+	type: 'line',
+	data: {
+		datasets: [{
+			label: '',
+			backgroundColor: 'transparent',
+			borderColor: 'rgb(0, 186, 6)'
+		}]
+	},
 	options: {
 		title: {
 			display: true,
@@ -100,7 +107,7 @@ const myChart = new Chart( ctx, {
 		},
 		legend: {
 			labels: {
-				boxWidth: 15
+				boxWidth: 0
 			}
 		},
 		tooltips: {
@@ -112,7 +119,7 @@ const myChart = new Chart( ctx, {
 	}
 });
 
-function convert() {
+function getRates() {
 	if(!isNumeric(coinsFrom.value) || !isNumeric(coinsTo.value) ||
 		 coinsFrom.value == 0 || coinsTo.value == 0 ||
 		 startDate.value == "" || endDate.value === "" ||
@@ -130,32 +137,27 @@ function convert() {
 			document.getElementById('result').innerHTML = "Sorry, we haven't exchange rates for this period =(";
 			return false;
 		}
-		const sorted = Object.entries(result.rates).sort( ([key1, value1], [key2, value2]) => {
-			const a2 = Date.parse(key1);
-			const b2 = Date.parse(key2);
-			return a2 - b2;
-		});
-		const rates = sorted.rates;
-		/* const dates = Object.keys(result.rates);
-		const values = Object.values(result.rates).map( values => values[`${currencyTo.value}`].toFixed(4)); */
+		console.log(result.rates);
 		
-		//.values and .keys methods return random arrays! =((
+		// sorting results
+		const cortedResult = Object.entries(result.rates).sort( ([key1], [key2]) => {
+			return Date.parse(key1) - Date.parse(key2);
+		});
+		
 		let dates = [], values = [];
-		for(let [date, value] of sorted) {
+		for(let [date, value] of cortedResult) {
 			dates.push(date);
 			values.push(value[currencyTo.value] * coinsFrom.value / coinsTo.value);
 		}
 
+		// to save animation it's need to override props of old object instead of creating new object
 		myChart.data.labels = dates;
-		myChart.data.datasets[0] = {
-			label: `${coinsFrom.value} ${currencyFrom.value} to ${coinsTo.value} ${currencyTo.value} exchange rate`,
-			data: values,
-			backgroundColor: 'transparent',
-			borderColor: 'rgb(0, 186, 6)'
-		};
+		myChart.data.datasets[0].data = values;
+		myChart.data.datasets[0].label = `${coinsFrom.value} ${currencyFrom.value} to ${coinsTo.value} ${currencyTo.value} exchange rate`;
+		myChart.options.legend.labels.boxWidth = 15;
 
 		myChart.update({
-			duration: 2000
+			duration: 1000
 		});
 
 		const scoreboard = document.getElementById('result');
