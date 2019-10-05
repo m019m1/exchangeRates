@@ -1,0 +1,56 @@
+$width: 640px;
+.exchange {
+	width: $width;
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	.enterCurrency {
+		display: flex;
+		justify-content: flex-end;
+		.currency {
+			margin: 10px 20px;
+		}
+		.coins {
+			width: 50px;
+			margin: 10px 5px 10px 20px;
+			text-align: end;
+		}
+	}
+	.enterDate {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		.datePicker {
+			margin: 10px 0px 10px 5px;
+		}
+	}
+	#go {
+		grid-column: 2/3;
+		margin: auto;
+		margin-right: 0px;
+	}
+	#result {
+		grid-column: 1/3;
+		margin: auto;
+		margin-right: 0px;
+		margin-top: 10px;
+		font-weight: bold;
+		color: #dd4444;
+	}
+}
+.chartContainer {
+	width: $width;
+	height: $width / 2;
+	position: relative;
+	.chartNavigation {
+		display: none;
+		position: absolute;
+		top: 25px;
+		width: 130px;
+	}
+	#backward {
+		left: 5px;
+	}
+	#forward {
+		right: 5px;
+	}
+}

@@ -1,58 +1,58 @@
 .exchange {
-	width: 640px;
-	display: grid;
-	grid-template-columns: max-content 1fr;
-
+  width: 640px;
+  display: grid;
+  grid-template-columns: max-content 1fr;
 }
-	.enterCurrency {
-		display: flex;
-		justify-content: flex-end;
-	}
-		.currency {
-			margin: 10px 20px;
-		}
-		.coins {
-			width: 50px;
-			margin: 10px 5px 10px 20px;
-			text-align: end;
-		}
-	
-	.enterDate {
-		display: flex;
-		justify-content: flex-end;
-		align-items: center;
-	}
-		.datePicker {
-			margin: 10px 0px 10px 5px;
-		}
+.exchange .enterCurrency {
+  display: flex;
+  justify-content: flex-end;
+}
+.exchange .enterCurrency .currency {
+  margin: 10px 20px;
+}
+.exchange .enterCurrency .coins {
+  width: 50px;
+  margin: 10px 5px 10px 20px;
+  text-align: end;
+}
+.exchange .enterDate {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.exchange .enterDate .datePicker {
+  margin: 10px 0px 10px 5px;
+}
+.exchange #go {
+  grid-column: 2/3;
+  margin: auto;
+  margin-right: 0px;
+}
+.exchange #result {
+  grid-column: 1/3;
+  margin: auto;
+  margin-right: 0px;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #dd4444;
+}
 
-	#go {
-		grid-column: 2/3;
-		margin: auto;
-		margin-right: 0px;
-	}
-	#result {
-		grid-column: 1/3;
-		margin: auto;
-		margin-right: 0px;
-		margin-top: 10px;
-		font-weight: bold;
-		color: #dd4444;
-	}
 .chartContainer {
-	width: 640px;
-	height: 320px;
-	position: relative;
+  width: 640px;
+  height: 320px;
+  position: relative;
 }
-	.chartNavigation {
-		display: none;
-		position: absolute;
-		top: 25px;
-		width: 130px;
-	}
-	#backward {
-		left: 5px;
-	}
-	#forward {
-		right: 5px;
-	}
+.chartContainer .chartNavigation {
+  display: none;
+  position: absolute;
+  top: 25px;
+  width: 130px;
+}
+.chartContainer #backward {
+  left: 5px;
+}
+.chartContainer #forward {
+  right: 5px;
+}
+
+/*# sourceMappingURL=style.css.map */

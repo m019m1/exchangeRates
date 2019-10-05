@@ -42,18 +42,16 @@ const startDate = document.getElementById('startDate');
 const endDate = document.getElementById('endDate');
 let today;
 
-initDate();
-initCurrencies();
-
-function initDate() {
+// do you declare functions via 'const' directive?
+// I don't like it so much =(
+// just for a change...
+const initDate = () => {
 	today = new Date();
 	let [year, month, day] = getYearMonthDay(today);
 	startDate.value = `${year}-${month}-01`;
 	today = endDate.value = `${year}-${month}-${day}`;
 }
-
-function initCurrencies() {
-	let options = '';
+const initCurrencies = () => {
 	for(let [name, description] of CURRENCIES) {
 		switch (name) {
 			case 'USD':
@@ -73,8 +71,11 @@ function initCurrencies() {
 	}
 }
 
-currencyFrom.onchange = function() {showNominal(coinsFrom, event.currentTarget.value)};
-currencyTo.onchange = function() {showNominal(coinsTo, event.currentTarget.value)};
+initDate();
+initCurrencies();
+
+currencyFrom.onchange = () => {showNominal(coinsFrom, event.currentTarget.value)};
+currencyTo.onchange = () => {showNominal(coinsTo, event.currentTarget.value)};
 
 function showNominal(scoreboard, name) {
 	const index = ( CURRENCIES.map( currency => currency[0]) ).indexOf(name);
@@ -127,14 +128,18 @@ function goForward(numOfDays) {
 	const deltaMonths = (end - start) / 1000 / 86400;
 
 	end.setDate(end.getDate() + numOfDays);
+
+	// checking whether it later then today or not
 	end = end > new Date() ? new Date() : end;
 	let [year, month, day] = getYearMonthDay(end);
 	endDate.value = `${year}-${month}-${day}`;
 	
+	// if we have already big set of data, we just move the chart
+	// otherwise we add numOfDays-data to the chart
 	if(deltaMonths >= 30) {
 		start.setDate(start.getDate() + numOfDays);
-		let [year2, month2, day2] = getYearMonthDay(start);
-		startDate.value = `${year2}-${month2}-${day2}`;
+		[year, month, day] = getYearMonthDay(start);
+		startDate.value = `${year}-${month}-${day}`;
 	}
 	getRates(startDate.value, endDate.value);
 };
@@ -149,6 +154,8 @@ function goBackward(numOfDays) {
 	let [year, month, day] = getYearMonthDay(start);
 	startDate.value = `${year}-${month}-${day}`;
 
+	// if we have already big set of data, we just move the chart
+	// otherwise we add numOfDays to the chart
 	if(deltaMonths >= 30) {
 		end.setDate(end.getDate() - numOfDays);
 		let [year2, month2, day2] = getYearMonthDay(end);
@@ -165,9 +172,10 @@ function getYearMonthDay(date) {
 	day = day > 9 ? day : '0' + day;
 	return [year, month, day];
 }
+
 function getRates(start, end) {
 	
-	// checking
+	// checking form
 	if(!isNumeric(coinsFrom.value) || !isNumeric(coinsTo.value) ||
 	coinsFrom.value == 0 || coinsTo.value == 0 ||
 	start == "" || end === "" ||
@@ -180,8 +188,14 @@ function getRates(start, end) {
 	
 	(async () => {
 		const url = `https://api.exchangeratesapi.io/history?start_at=${start}&end_at=${end}&symbols=${currencyTo.value}&base=${currencyFrom.value}`;
-		const response = await fetch(url);
-		const result = await response.json();
+		let response, result;
+		try {
+			response = await fetch(url);
+			result = await response.json();
+		} catch (error) {
+			alert(`Sorry, exchange rates' server doesn't response. Try again later\n${error}`);
+			return false;
+		}
 		if(isEmpty(result.rates)) {
 			document.getElementById('result').innerHTML = "Sorry, we haven't exchange rates for this period =(";
 			myChart.data.labels = [];
@@ -192,7 +206,7 @@ function getRates(start, end) {
 			myChart.update({
 				duration: 1000
 			});
-			checkWhetherCanGoForward();
+			toggleForwardButton();
 			return false;
 		}
 		
@@ -223,9 +237,9 @@ function getRates(start, end) {
 		${values[values.length - 1].toFixed(4)}`;
 		
 		backward.style.display = forward.style.display = "inline-block";
-		checkWhetherCanGoForward();
+		toggleForwardButton();
 
-		function checkWhetherCanGoForward() {
+		function toggleForwardButton() {
 			if(end == today) forward.setAttribute('disabled', 'true');
 				else forward.removeAttribute('disabled');
 		}
